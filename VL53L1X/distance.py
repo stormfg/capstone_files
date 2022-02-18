@@ -7,8 +7,8 @@ import signal
 import VL53L1X
 
 
-def runLaser():
-    print("""distance.py
+#def runLaser():
+print("""distance.py
 
 Display the distance read from the sensor.
 
@@ -61,5 +61,5 @@ while running:
     print("Distance: {}mm".format(distance_in_mm))
     time.sleep(0.05)
 
-if __name__ == '__main__':
-    runLaser()
+#if __name__ == '__main__':
+#   runLaser()
