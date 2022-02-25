@@ -25,6 +25,7 @@ Press Ctrl+C to exit.
 # If you're using a software i2c bus (ie: HyperPixel4) then
 # you should `ls /dev/i2c-*` and use the relevant bus number.
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+tof.setUserRoi(6,9,9,6)
 tof.open()
 
 # Optionally set an explicit timing budget
