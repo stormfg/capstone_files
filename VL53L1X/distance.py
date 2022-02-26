@@ -3,6 +3,7 @@
 import time
 import sys
 import signal
+from collections import deque
 
 import VL53L1X
 
@@ -56,10 +57,15 @@ def exit_handler(signal, frame):
 # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
 signal.signal(signal.SIGINT, exit_handler)
 
+deque_for_avg = deque([],10)
+
 while running:
     distance_in_mm = tof.get_distance()
+    deque_for_avg.appendleft(distance_in_mm)
     #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
     print("Distance: {}mm".format(distance_in_mm))
+    if sum(deque_for_avg) > 0:
+        print("Running Average: {}mm".format(deque_for_avg/10))
     time.sleep(0.05)
 
 #if __name__ == '__main__':
