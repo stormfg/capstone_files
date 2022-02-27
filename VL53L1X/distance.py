@@ -26,8 +26,9 @@ Press Ctrl+C to exit.
 # If you're using a software i2c bus (ie: HyperPixel4) then
 # you should `ls /dev/i2c-*` and use the relevant bus number.
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
-tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
 tof.open()
+tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
+
 
 # Optionally set an explicit timing budget
 # These values are measurement time in microseconds,
@@ -43,7 +44,7 @@ tof.start_ranging(0)  # Start ranging
                       # 3 = Long Range
 
 
-running = True
+#running = True
 
 
 def exit_handler(signal, frame):
@@ -59,13 +60,13 @@ signal.signal(signal.SIGINT, exit_handler)
 
 deque_for_avg = deque([],10)
 
-while running:
+for i in range(0,1000):
     distance_in_mm = tof.get_distance()
     deque_for_avg.appendleft(distance_in_mm)
     #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
     print("Distance: {}mm".format(distance_in_mm))
     if sum(deque_for_avg) > 0:
-        print("Running Average: {}mm".format(deque_for_avg/10))
+        print("Running Average: {}mm".format(sum(deque_for_avg)/10))
     time.sleep(0.05)
 
 #if __name__ == '__main__':
