@@ -45,7 +45,7 @@ for i in range(0,100):
                         # 3 = Long Range
 
 
-    running = True
+    #running = True
 
 
     def exit_handler(signal, frame):
@@ -61,14 +61,14 @@ for i in range(0,100):
 
     deque_for_avg = deque([],10)
 
-    while running:
-        distance_in_mm = tof.get_distance()
-        deque_for_avg.appendleft(distance_in_mm)
-        #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
-        print("Distance: {}mm".format(distance_in_mm))
-        if sum(deque_for_avg) > 0:
-            print("Running Average: {}mm".format(sum(deque_for_avg)/10))
-        time.sleep(0.05)
+    #while running:
+    distance_in_mm = tof.get_distance()
+    deque_for_avg.appendleft(distance_in_mm)
+    #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
+    print("Distance: {}mm".format(distance_in_mm))
+    if sum(deque_for_avg) > 0:
+        print("Running Average: {}mm".format(sum(deque_for_avg)/10))
+    time.sleep(0.05)
 
 #if __name__ == '__main__':
 #   runLaser()
