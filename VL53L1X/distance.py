@@ -37,37 +37,38 @@ tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
 # should use `tof.start_ranging(0)`
 tof.set_timing(120000, 130)
 
-tof.start_ranging(0)  # Start ranging
-                      # 0 = Unchanged
-                      # 1 = Short Range
-                      # 2 = Medium Range
-                      # 3 = Long Range
+for i in range(0,100):
+    tof.start_ranging(0)  # Start ranging
+                        # 0 = Unchanged
+                        # 1 = Short Range
+                        # 2 = Medium Range
+                        # 3 = Long Range
 
 
-#running = True
+    running = True
 
 
-def exit_handler(signal, frame):
-    global running
-    running = False
-    tof.stop_ranging()
-    print()
-    sys.exit(0)
+    def exit_handler(signal, frame):
+        global running
+        running = False
+        tof.stop_ranging()
+        print()
+        sys.exit(0)
 
 
-# Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
-signal.signal(signal.SIGINT, exit_handler)
+    # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
+    signal.signal(signal.SIGINT, exit_handler)
 
-deque_for_avg = deque([],10)
+    deque_for_avg = deque([],10)
 
-for i in range(0,1000):
-    distance_in_mm = tof.get_distance()
-    deque_for_avg.appendleft(distance_in_mm)
-    #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
-    print("Distance: {}mm".format(distance_in_mm))
-    if sum(deque_for_avg) > 0:
-        print("Running Average: {}mm".format(sum(deque_for_avg)/10))
-    time.sleep(0.05)
+    while running:
+        distance_in_mm = tof.get_distance()
+        deque_for_avg.appendleft(distance_in_mm)
+        #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
+        print("Distance: {}mm".format(distance_in_mm))
+        if sum(deque_for_avg) > 0:
+            print("Running Average: {}mm".format(sum(deque_for_avg)/10))
+        time.sleep(0.05)
 
 #if __name__ == '__main__':
 #   runLaser()
