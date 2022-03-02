@@ -66,10 +66,11 @@ for i in range(0,100):
     #while running:
     distance_in_mm = tof.get_distance()
     deque_for_avg.appendleft(distance_in_mm)
-    #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
+    abv_no_temp = abvscale.abvConversion(mean(deque_for_avg))
     print("Distance: {}mm".format(distance_in_mm))
     if sum(deque_for_avg) > 0:
         print("Running Average: {}mm".format(mean(deque_for_avg)))
+    print("Current abv: ", abv_no_temp)
     time.sleep(0.05)
 
 #return abvScale.abvConversion(sum(deque_for_avg)/10)
