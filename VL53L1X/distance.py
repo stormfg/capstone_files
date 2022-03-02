@@ -4,6 +4,7 @@ import time
 import sys
 import signal
 from collections import deque
+from statistics import mean, stdev
 
 import VL53L1X
 
@@ -37,6 +38,8 @@ tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
 # should use `tof.start_ranging(0)`
 tof.set_timing(120000, 130)
 
+deque_for_avg = deque([],10)
+
 for i in range(0,100):
     tof.start_ranging(0)  # Start ranging
                         # 0 = Unchanged
@@ -59,7 +62,6 @@ for i in range(0,100):
     # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
     signal.signal(signal.SIGINT, exit_handler)
 
-    deque_for_avg = deque([],10)
 
     #while running:
     distance_in_mm = tof.get_distance()
@@ -67,8 +69,11 @@ for i in range(0,100):
     #abv_temp_corrected = abvScale.abvConversion(distance_in_mm, 60)
     print("Distance: {}mm".format(distance_in_mm))
     if sum(deque_for_avg) > 0:
-        print("Running Average: {}mm".format(sum(deque_for_avg)/10))
+        print("Running Average: {}mm".format(mean(deque_for_avg)))
     time.sleep(0.05)
+
+#return abvScale.abvConversion(sum(deque_for_avg)/10)
+
 
 #if __name__ == '__main__':
 #   runLaser()
