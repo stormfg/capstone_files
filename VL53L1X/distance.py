@@ -5,6 +5,7 @@ import sys
 import signal
 from collections import deque
 from statistics import mean, stdev
+import abvscale
 
 import VL53L1X
 
@@ -29,6 +30,7 @@ Press Ctrl+C to exit.
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
 tof.open()
 tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
+scale = abvscale.main()
 
 
 # Optionally set an explicit timing budget
@@ -66,10 +68,12 @@ for i in range(0,100):
     #while running:
     distance_in_mm = tof.get_distance()
     deque_for_avg.appendleft(distance_in_mm)
-    abv_no_temp = abvscale.abvConversion(mean(deque_for_avg))
+    abv_no_temp = scale.abvConversion(mean(deque_for_avg))
+    # data = open("data.txt", "w")
+    # data.write(abv_no_temp)
     print("Distance: {}mm".format(distance_in_mm))
-    if sum(deque_for_avg) > 0:
-        print("Running Average: {}mm".format(mean(deque_for_avg)))
+    # if sum(deque_for_avg) > 0:
+    #     print("Running Average: {}mm".format(mean(deque_for_avg)))
     print("Current abv: ", abv_no_temp)
     time.sleep(0.05)
 

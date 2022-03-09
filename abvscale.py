@@ -11,6 +11,7 @@ from numpy import linspace
 #import VL53L1X
 #this is assuming the hydrometer is linear
 #
+temp = 60
 class abvScale:
 
     units = 'mm'
@@ -22,13 +23,17 @@ class abvScale:
         self.laser_offset = 0.0
         self.laserRange = self.hydrometerRange + self.laser_offset
         self.increment = self.hydrometerRange / self.laserRange
+        self.set_zero(self.laser_offset)
     
+   #needs a decorator?
     def set_zero(self,laser_reading):
         self.laser_offset = laser_reading
         self.mm_to_abv = self.make_dict(self.laser_offset)
+
     def get_info(self):
         print("Brand: " + self.hydrometer_brand + " Scale: " + 
                self.hydrometer_scale)
+
     def set_hydrometerRange(self, new_value):
         if new_value != self.hydrometerRange:
             self.hydrometerRange = new_value
@@ -57,9 +62,6 @@ class abvScale:
 
         return dict(zip(indices,body))
 
-
-
-
     def abvConversion(self,key,temp):
         return self.mm_to_abv[key]
     
@@ -69,10 +71,8 @@ class abvScale:
 
 
 def main():
-    testobj = abvScale()
-    #testobj.set_zero(45)
-    #testobj.get_chart()
-    #testobj.make_dict()
+    current_scale = abvScale()
+    return current_scale
 
 if __name__ == '__main__':
     main()
