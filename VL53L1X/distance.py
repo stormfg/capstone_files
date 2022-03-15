@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from math import dist
 import time
 import sys
 import signal
@@ -42,40 +43,60 @@ tof.set_timing(120000, 130)
 
 deque_for_avg = deque([],10)
 
-for i in range(0,100):
-    tof.start_ranging(0)  # Start ranging
-                        # 0 = Unchanged
-                        # 1 = Short Range
-                        # 2 = Medium Range
-                        # 3 = Long Range
+def initialize():
+    tof.start_ranging(0)
+    first_read = tof.get_distance()
+    if first_read < 0:
+        first_read = tof.get_distance()
+    scale.set_zero(first_read)
+    tof.stop_ranging()
+    print("Offset set to: ", scale.get_chart(first_read))
+
+initialize()
 
 
-    #running = True
+tof.start_ranging(0)  # Start ranging
+                    # 0 = Unchanged
+                    # 1 = Short Range
+                    # 2 = Medium Range
+                    # 3 = Long Range
 
 
-    def exit_handler(signal, frame):
-        global running
-        running = False
-        tof.stop_ranging()
-        print()
-        sys.exit(0)
+running = True
 
 
-    # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
-    signal.signal(signal.SIGINT, exit_handler)
+def exit_handler(signal, frame):
+    global running
+    running = False
+    tof.stop_ranging()
+    print()
+    sys.exit(0)
 
 
-    #while running:
+# Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
+signal.signal(signal.SIGINT, exit_handler)
+
+i=0
+file = open("data.txt", "a")
+while running:
     distance_in_mm = tof.get_distance()
-    deque_for_avg.appendleft(distance_in_mm)
-    abv_no_temp = scale.abvConversion(mean(deque_for_avg))
-    # data = open("data.txt", "w")
-    # data.write(abv_no_temp)
-    print("Distance: {}mm".format(distance_in_mm))
-    # if sum(deque_for_avg) > 0:
-    #     print("Running Average: {}mm".format(mean(deque_for_avg)))
-    print("Current abv: ", abv_no_temp)
+    if distance_in_mm > 0:
+        deque_for_avg.appendleft(distance_in_mm)
+        print("Avg = ", mean(deque_for_avg))
+    try:
+        abv_no_temp = scale.abvConversion(mean(deque_for_avg))
+    except KeyError:
+        pass
+    else:
+        print("ABV = {}%".format(abv_no_temp))
+        i += 1
+        print("Distance: {}mm".format(distance_in_mm))
+        line_write = (str(round(distance_in_mm,2)) + " " + str(mean(deque_for_avg)) + " " + str(abv_no_temp) + "\n")
+        file.write(line_write)
+    if i > 100:
+        running = False
     time.sleep(0.05)
+file.close()
 
 #return abvScale.abvConversion(sum(deque_for_avg)/10)
 

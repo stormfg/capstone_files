@@ -17,18 +17,18 @@ class abvScale:
     units = 'mm'
     
     def __init__(self):
-        self.hydrometerRange = 146.0
+        self.hydrometerRange = 146.0 #mm measurement of the stem of the hydrometer
         hydrometer_brand = 'North Mountain Supply'
         hydrometer_scale = '0 to 100'
         self.laser_offset = 0.0
-        self.laserRange = self.hydrometerRange + self.laser_offset
+        self.laserRange = self.hydrometerRange - self.laser_offset
         self.increment = self.hydrometerRange / self.laserRange
         self.set_zero(self.laser_offset)
     
    #needs a decorator?
     def set_zero(self,laser_reading):
         self.laser_offset = laser_reading
-        self.mm_to_abv = self.make_dict(self.laser_offset)
+        self.mm_to_abv = self.make_dict()
 
     def get_info(self):
         print("Brand: " + self.hydrometer_brand + " Scale: " + 
@@ -47,10 +47,10 @@ class abvScale:
     
     #build dictionary that associates a height from the distance laser with an ABV.
     #uses equation in constructor to generate incremental values
-    def make_dict(self, offset):
+    def make_dict(self):
 
         #make the dictionary key
-        indices = range(offset, int(self.laserRange))
+        indices = range(self.laser_offset, self.laserRange)
 
         #for loop to fill y axis with increments for y(x)
         body = []
@@ -62,11 +62,11 @@ class abvScale:
 
         return dict(zip(indices,body))
 
-    def abvConversion(self,key,temp):
+    def abvConversion(self,key):
         return self.mm_to_abv[key]
     
-    def get_chart(self):
-        print(self.mm_to_abv)
+    def get_chart(self,key):
+        return self.mm_to_abv[key]
        # for i in range(len(self.mm_to_abv)):
 
 
