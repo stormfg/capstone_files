@@ -5,7 +5,7 @@ import threading
 import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 from w1thermsensor import W1ThermSensor
 import sys
-import lcd.Adafruit_ADS1x15.ADS1x15 as ADS
+import lcd.Adafruit_ADS1x15.ADS1115 as ADS
 from lcd.Adafruit_ADS1x15.analog_in import AnalogIn
 import busio
 
