@@ -6,7 +6,7 @@ import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 from w1thermsensor import W1ThermSensor
 import sys
 import lcd.Adafruit_ADS1x15.ADS1x15 as ADS
-from lcd.Adafruit_ADS1x15.analog_in import AnalogIn
+#from lcd.Adafruit_ADS1x15.analog_in import AnalogIn
 import busio
 
 
@@ -26,7 +26,7 @@ lcd_rows = 2
 i2c1 = board.I2C()  # uses board.SCL and board.SDA
 i2c2 = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c2)
-channel = AnalogIn(ads, ADS.P0)
+#channel = AnalogIn(ads, ADS.P0)
 
 # Initialise the LCD class
 lcd = character_lcd.Character_LCD_RGB_I2C(i2c1, lcd_columns, lcd_rows)
@@ -50,9 +50,9 @@ def temploop():
         temperature_f = round((temperature_c * (9/5)) + 32,2)
         lcd.message = "The temperature \nis %s F" % temperature_f
         lcd.message = "The temperature \nis %s C" % temperature_c
-        v=round(channel.voltage,2)
-        ph = round((-5.641509*(v)) + 21.55509299,2)
-        lcd.message = "The pH is: " + str(ph)
+        #v=round(channel.voltage,2)
+        #ph = round((-5.641509*(v)) + 21.55509299,2)
+        #lcd.message = "The pH is: " + str(ph)
         time.sleep(2)
         
     
