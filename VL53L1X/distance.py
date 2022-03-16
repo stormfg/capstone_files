@@ -7,11 +7,8 @@ import signal
 from collections import deque
 from statistics import mean, stdev
 import abvscale
-
 import VL53L1X
 
-
-#def runLaser():
 print("""distance.py
 
 Display the distance read from the sensor.
@@ -31,7 +28,6 @@ Press Ctrl+C to exit.
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
 tof.open()
 tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
-scale = abvscale.main()
 
 
 # Optionally set an explicit timing budget
@@ -44,62 +40,60 @@ tof.set_timing(120000, 130)
 deque_for_avg = deque([],10)
 
 def initialize():
+    tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+    tof.open()
+    tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
+    scale = abvscale.main()
     tof.start_ranging(0)
     first_read = tof.get_distance()
     if first_read < 0:
         first_read = tof.get_distance()
     scale.set_zero(first_read)
     tof.stop_ranging()
-    print("Offset set to: ", scale.get_chart(first_read))
+    #print("Offset set to: ", scale.get_chart(first_read))
+    return scale
 
-initialize()
-
-
-tof.start_ranging(0)  # Start ranging
-                    # 0 = Unchanged
-                    # 1 = Short Range
-                    # 2 = Medium Range
-                    # 3 = Long Range
-
-
-running = True
-
-
-def exit_handler(signal, frame):
-    global running
-    running = False
-    tof.stop_ranging()
-    print()
-    sys.exit(0)
+def runLaser(scale):
+    tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+    tof.open()
+    tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
+    tof.start_ranging(0)  # Start ranging
+                        # 0 = Unchanged
+                        # 1 = Short Range
+                        # 2 = Medium Range
+                        # 3 = Long Range
 
 
-# Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
-signal.signal(signal.SIGINT, exit_handler)
+    running = True
 
-i=0
-file = open("data.txt", "a")
-while running:
-    distance_in_mm = tof.get_distance()
-    if distance_in_mm > 0:
-        deque_for_avg.appendleft(distance_in_mm)
-        print("Avg = ", mean(deque_for_avg))
-    try:
-        abv_no_temp = scale.abvConversion(mean(deque_for_avg))
-    except KeyError:
-        pass
-    else:
-        print("ABV = {}%".format(abv_no_temp))
-        i += 1
-        print("Distance: {}mm".format(distance_in_mm))
-        line_write = (str(round(distance_in_mm,2)) + " " + str(mean(deque_for_avg)) + " " + str(abv_no_temp) + "\n")
-        file.write(line_write)
-    if i > 100:
+
+    def exit_handler(signal, frame):
+        global running
         running = False
-    time.sleep(0.05)
-file.close()
+        tof.stop_ranging()
+        print()
+        sys.exit(0)
 
-#return abvScale.abvConversion(sum(deque_for_avg)/10)
+
+    # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
+    signal.signal(signal.SIGINT, exit_handler)
+    while running:
+        distance_in_mm = tof.get_distance()
+        if distance_in_mm > 0:
+            deque_for_avg.appendleft(distance_in_mm)
+        try:
+            abv_no_temp = scale.abvConversion(mean(deque_for_avg))
+        except KeyError:
+            pass
+        else:
+            i += 1
+        if i > 100:
+            running = False
+        time.sleep(0.05)
 
 
-#if __name__ == '__main__':
-#   runLaser()
+    return abv_no_temp
+
+
+if __name__ == '__main__':
+    runLaser()
