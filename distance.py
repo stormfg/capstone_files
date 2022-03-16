@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from math import dist
+import numpy
 import time
 import sys
 import signal
@@ -82,7 +82,7 @@ def runLaser(scale):
         if distance_in_mm > 0:
             deque_for_avg.appendleft(distance_in_mm)
         try:
-            abv_no_temp = scale.abvConversion(mean(deque_for_avg))
+            abv_no_temp = scale.abvConversion(numpy.mean(deque_for_avg))
         except KeyError:
             pass
         else:
