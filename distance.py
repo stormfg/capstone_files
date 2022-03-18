@@ -46,7 +46,7 @@ def initialize():
     scale = abvscale.main()
     tof.start_ranging(0)
     first_read = tof.get_distance()
-    if first_read < 0:
+    for _ in range(0,5):
         first_read = tof.get_distance()
     scale.set_zero(first_read)
     tof.stop_ranging()
@@ -56,7 +56,7 @@ def initialize():
 def runLaser(scale):
     tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
     tof.open()
-    tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6))
+    tof.set_user_roi(VL53L1X.VL53L1xUserRoi(6,9,9,6)) #Center of SPAD array
     tof.start_ranging(0)  # Start ranging
                         # 0 = Unchanged
                         # 1 = Short Range
@@ -76,7 +76,7 @@ def runLaser(scale):
 
 
     # Attach a signal handler to catch SIGINT (Ctrl+C) and exit gracefully
-    signal.signal(signal.SIGINT, exit_handler)
+    #signal.signal(signal.SIGINT, exit_handler)
     while running:
         distance_in_mm = tof.get_distance()
         if distance_in_mm > 0:
