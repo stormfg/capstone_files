@@ -8,7 +8,9 @@ LCD Github link:
 https://github.com/adafruit/Adafruit_CircuitPython_CharLCD/tree/main
 
 ###########################################################################
+
 IMPORTANT
+
 ###########################################################################
 
 Once the files are downloaded onto the local machine, ensure that there are no folders in the main directory. The contents of each folder should be out in the directory from whre you run Final_Code_maybe.py
