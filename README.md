@@ -1,7 +1,7 @@
 # capstone_files
 Capstone Project code
 
-kombu.py is the main executing code for all the peripherals.
+Final_Code_maybe.py is the main executing code for continuous operation
 
 
 LCD Github link:
