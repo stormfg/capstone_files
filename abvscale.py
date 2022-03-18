@@ -17,15 +17,16 @@ class abvScale:
     units = 'mm'
     
     def __init__(self):
-        self.hydrometerRange = 146.0 #mm measurement of the stem of the hydrometer
+        self.hydrometerRange = 146 #mm measurement of the stem of the hydrometer
         hydrometer_brand = 'North Mountain Supply'
         hydrometer_scale = '0 to 100'
-        self.laser_offset = 0.0
+        self.laser_offset = 0
         self.laserRange = self.hydrometerRange - self.laser_offset
         self.increment = self.hydrometerRange / self.laserRange
         self.set_zero(self.laser_offset)
     
-   #needs a decorator?
+    #Originally meant to be setters/getters, but python doesn't use these
+    #decorators should be used instead
     def set_zero(self,laser_reading):
         self.laser_offset = laser_reading
         self.mm_to_abv = self.make_dict()
@@ -33,7 +34,7 @@ class abvScale:
     def get_info(self):
         print("Brand: " + self.hydrometer_brand + " Scale: " + 
                self.hydrometer_scale)
-
+        
     def set_hydrometerRange(self, new_value):
         if new_value != self.hydrometerRange:
             self.hydrometerRange = new_value
@@ -61,13 +62,9 @@ class abvScale:
             #print(round(body[index],2), " ")
 
         return dict(zip(indices,body))
-
-    def abvConversion(self,key):
-        return self.mm_to_abv[key]
     
     def get_chart(self,key):
         return self.mm_to_abv[key]
-       # for i in range(len(self.mm_to_abv)):
 
 
 def main():
